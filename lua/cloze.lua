@@ -24,6 +24,7 @@ local function get_deck_from_buffer(lines)
 end
 
 -- send a single note to Anki
+
 local function send_note_to_anki(note)
   local payload = {
     action = "addNote",
@@ -36,13 +37,22 @@ local function send_note_to_anki(note)
     headers = { ["Content-Type"] = "application/json" }
   })
 
-  local body = vim.fn.json_decode(res.body)
-  if body.error then
-    print("❌ " .. body.error)
+  local decoded, ok = pcall(vim.fn.json_decode, res.body)
+
+  if not ok then
+    print("❌ Failed to decode response from AnkiConnect")
+    return
+  end
+
+  if decoded.error then
+    print("❌ " .. tostring(decoded.error))
   else
-    print("✅ Added: " .. (note.fields.Front or note.fields.Text))
+    local front = note.fields.Front or note.fields.Text or "?"
+    print("✅ Added: " .. front)
   end
 end
+
+
 
 -- main function: parse and send cards
 function M.send_cards_from_buffer()
