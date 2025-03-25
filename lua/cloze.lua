@@ -37,7 +37,8 @@ local function send_note_to_anki(note)
     headers = { ["Content-Type"] = "application/json" }
   })
 
-  local decoded, ok = pcall(vim.fn.json_decode, res.body)
+  -- FIXED: unpack pcall correctly
+  local ok, decoded = pcall(vim.fn.json_decode, res.body)
 
   if not ok then
     print("❌ Failed to decode response from AnkiConnect")
@@ -51,7 +52,6 @@ local function send_note_to_anki(note)
     print("✅ Added: " .. front)
   end
 end
-
 
 
 -- main function: parse and send cards
