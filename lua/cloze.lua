@@ -18,10 +18,17 @@ end
 local function get_deck_from_buffer(lines)
   for _, line in ipairs(lines) do
     local match = line:match("^@deck%s+(.+)$")
-    if match then return vim.trim(match) end
+    if match then
+      local deck = vim.trim(match)
+      print("📦 Deck selected: " .. deck)
+      return deck
+    end
   end
   return config.default_deck
 end
+
+
+
 
 -- send a single note to Anki
 
